@@ -3,6 +3,8 @@
 In this document the necessary steps for building a Course Gallery Web Application will be described to be able to
 replicate the implementation. The steps in here are mainly obtained from de [Treehouse Django Basics Course](https://teamtreehouse.com/library/django-basics).
 
+This is a test for version control.
+
 ## Building an App
 
 To build an app once Django is installed, simply run `python manage.py startapp <name-of-app>` in the terminal. Afterwards,
