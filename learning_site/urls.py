@@ -21,8 +21,8 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.hello_world),
-    path('courses/', include('courses.urls')),
+    path('', views.hello_world, name='home'),
+    path('courses/', include(('courses.urls', 'courses'), namespace='courses')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
