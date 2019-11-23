@@ -66,7 +66,8 @@ class Step(models.Model):
 If two models have the same order value then the distinction is done lastly by primary key.
 
 In the example above notice that we are adding a property to the model that has a value from another model. This is done
-by using the `model.ForeignKey(<other-model>, on_delete)` command. 
+by using the `model.ForeignKey(<other-model>, on_delete)` command. It is important to add that if a `ForeignKey` model
+is defined later in the code, the name of this model should be "quoted". 
 
 ### Creating a migration
 
@@ -187,6 +188,36 @@ urlpatterns = [
 In this example the `int:pk` part will be substituted for an integer. To render a view that has a value involved, such as
 a primary key, the `get_object_or_404(Course, pk=pk)` is very helpful. Even if we do not define explicitly a primary
 key (i.e. pk) for a model, Django infers that this is what we want when we passed it as a value in the function.
+
+To easily refer to urls in html code it is useful to add a name to such url. This is achieved with the following lines
+of code:
+
+```{python}
+path('', views.hello_world, name='home')
+```
+
+This pattern can cause a problem that is the possibility of more than one app having the same names of an url. In order
+to prevent this from happening, when we include those urls to the main project, we should add a namespace like this:
+
+```{python}
+path('courses/', include(('courses.urls', 'courses'), namespace='courses'))
+```
+
+Once we have defined names for our urls it is simple to use them in an anchor tag in an html file. Example:
+
+```{html}
+<h2><a href="{% url 'courses:detail' pk=step.course.pk %}">{{ step.course.title }}</a></h2>
+```
+
+```{html}
+<h3><a href="{% url 'courses:step' course_pk=step.course.pk step_pk=step.pk %}">{{ step.title }}</a></h3>
+```
+
+```{html}
+<header><a href="{% url 'courses:detail' pk=course.pk %}">{{ course.title }}</a></header>
+```
+
+Where the pattern `url '<namespace>:<url-name> <attributes>` emerge.
 
 ## Templates
 
