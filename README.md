@@ -37,7 +37,7 @@ class Course(models.Model):
 
 ```
 
-[More Django model field types.](https://docs.djangoproject.com/en/1.8/ref/models/fields/)
+[More Django model field types.](https://docs.djangoproject.com/en/2.2/ref/models/fields/)
 
 After creating a model it is necessary to migrate de database in order to include a table for this new model. This can 
 be achieved by running the following commands:
@@ -463,4 +463,4 @@ def course_detail(request, pk):
 * `python manage.py createsuperuser` - creates an admin user in Django project
 * `python manage.py test` - runs tests created in `tests.py` for the corresponding model
 
-More Django manage.py commands [here](https://docs.djangoproject.com/en/1.8/ref/django-admin/).
+More Django manage.py commands [here](https://docs.djangoproject.com/en/2.2/ref/django-admin/).
