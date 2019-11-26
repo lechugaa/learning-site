@@ -330,6 +330,77 @@ def course_list(request):
     return render(request, 'courses/course_list.html', {'courses': courses})
 ```
 
+## Tests
+
+Django includes a `tests.py` file in which we can include any tests that we want to perform to our code to ensure it 
+work properly. 
+
+Steps of testing:
+1. Testing models
+2. Testing views
+
+Here is an example of a test:
+
+```{python}
+class CourseModelTest(TestCase):
+
+    # test to see that the create now property is being defined correctly in our code
+    def test_course_creation(self):
+        course = Course.objects.create(
+            title="Python Regular Expressions",
+            description="Learn to write regular expressions in Python"
+        )
+        now = timezone.now()
+        self.assertLess(course.created_at, now)
+```
+
+As you can notice, every model should have its own test class. Once all the tests have been defined, you can run them
+with `python manage.py test` in the console. 
+
+All functions that are meant to be a test should start their name with that word e.g. `test_example_given(self)`. You
+can include other functions that help you perform some initial configurations. These should be named `setUp(self)` and
+can only exist one per test class. 
+
+Here is an example:
+
+```{python}
+class StepModelTest(TestCase):
+    """testing the step model"""
+
+    def setUp(self):
+        self.course = Course.objects.create(
+            title="Python Testing",
+            description="Learn to write tests in Python."
+        )
+
+    def test_step_creation(self):
+        step = Step.objects.create(
+            title="Introduction to Doctests",
+            description="Learn to write tests in your docstrings.",
+            course=self.course
+        )
+        self.assertIn(step, self.course.step_set.all())
+```
+
+### Testing Views
+
+To test views it is useful to use the context dictionary that the http request does to summon a view. An example is
+given below:
+
+```{python}
+    def test_course_list_view(self):
+        resp = self.client.get(reverse('courses:list'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(self.course, resp.context['courses'])
+        self.assertIn(self.course2, resp.context['courses'])
+```
+
+In the example above we are using the `reverse` function from `django.urls`. It is worth mentioning that in the example
+*courses* is the namespace given to the app and *list* is the name given to the view we are testing. 
+
+Although it is generally preferred to test one thing per test class, urls and views are so related that it is a good 
+idea to test both at the same time.
+
 ## Error Handling
 
 ### Return a 404 with a shortcut
@@ -353,5 +424,6 @@ def course_detail(request, pk):
 * `python manage.py migrate <app>` - executes migrations of an app
 * `python manage.py shell` - enter Django's shell
 * `python manage.py createsuperuser` - creates an admin user in Django project
+* `python manage.py test` - runs tests created in `tests.py` for the corresponding model
 
 More Django manage.py commands [here](https://docs.djangoproject.com/en/1.8/ref/django-admin/).
