@@ -338,6 +338,9 @@ work properly.
 Steps of testing:
 1. Testing models
 2. Testing views
+3. Testing templates
+
+### Testing Models
 
 Here is an example of a test:
 
@@ -388,11 +391,11 @@ To test views it is useful to use the context dictionary that the http request d
 given below:
 
 ```{python}
-    def test_course_list_view(self):
-        resp = self.client.get(reverse('courses:list'))
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(self.course, resp.context['courses'])
-        self.assertIn(self.course2, resp.context['courses'])
+def test_course_list_view(self):
+    resp = self.client.get(reverse('courses:list'))
+    self.assertEqual(resp.status_code, 200)
+    self.assertIn(self.course, resp.context['courses'])
+    self.assertIn(self.course2, resp.context['courses'])
 ```
 
 In the example above we are using the `reverse` function from `django.urls`. It is worth mentioning that in the example
@@ -400,6 +403,40 @@ In the example above we are using the `reverse` function from `django.urls`. It 
 
 Although it is generally preferred to test one thing per test class, urls and views are so related that it is a good 
 idea to test both at the same time.
+
+If an url needs parameters to summon a view, we can add them to the test with the `kwargs` parameters of the `reverse`
+function.
+
+```{python}
+resp = self.client.get(reverse('courses:step', kwargs={'course_pk': self.course.pk, 'step_pk': self.step.pk}))
+```
+
+### Testing Templates
+
+This can also be done on the functions used to test the views. We can divide this into two steps: 
+
+1. Checking if the correct template is being used:
+
+    ```{python}
+    self.assertTemplateUsed(resp, 'desired-path')
+    ```
+
+2. Checking that the rendered html page has some specific elements that we want from our models
+
+    ```{python}
+    self.assertContains(resp, self.property)
+    ```
+
+Example:
+
+```{python}
+def test_course_list_view(self):
+    # 1. checking if the correct template is being used
+    self.assertTemplateUsed(resp, 'courses/course_list.html')
+
+    # 2. checking that the rendered html page has some specific elements that we want from our models
+    self.assertContains(resp, self.course.title)
+```
 
 ## Error Handling
 
